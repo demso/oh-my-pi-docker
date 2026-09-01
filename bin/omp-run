@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Проверяем обязательный позиционный параметр
+if [ $# -lt 1 ]; then
+    echo "Ошибка: не указан рабочий путь (WorkPath)." >&2
+    echo "Использование: $0 <WorkPath>" >&2
+    exit 1
+fi
+
+WorkPath="$1"
+
+# Заменяем обратные слеши Windows (\) на прямые (/) для Linux контейнера
+LinuxPath="${WorkPath//\\//}"
+
+# Запускаем команду в контейнере, сразу установив рабочую директорию
+docker exec -it \
+    -e TERM="${TERM:-xterm}" \
+    -e COLORTERM=truecolor \
+    -w "$LinuxPath" \
+    omp-container omp -c
