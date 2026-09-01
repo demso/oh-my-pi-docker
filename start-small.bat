@@ -1,0 +1,1 @@
+docker exec -it omp-container sh -c "cd /var/repos/ && omp"

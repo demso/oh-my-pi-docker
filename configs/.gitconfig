@@ -1,0 +1,26 @@
+[user]
+	name = Копосов Дмитрий Ильич
+	email = koposov@keysystems.ru
+[diff]
+	guitool = vscode
+	tool = vscode
+[difftool "vscode"]
+	path = C:/Users/koposov/AppData/Local/Programs/Microsoft VS Code/Code.exe
+	cmd = code --wait --diff $LOCAL $REMOTE
+[merge]
+	guitool = vscode
+[mergetool "vscode"]
+	path = C:/Users/koposov/AppData/Local/Programs/Microsoft VS Code/Code.exe
+	cmd = \"C:/Users/koposov/AppData/Local/Programs/Microsoft VS Code/Code.exe\" --new-window --wait --merge \"$REMOTE\" \"$LOCAL\" \"$BASE\" \"$MERGED\"
+[alias]
+	#pretty commit history
+	hist = log --pretty=format:\"%Cred%h%Creset %C(green)(%ad)%Creset %s%C(yellow)%d%Creset  %C(bold blue)[%an] \" --graph --date='format-local:%d-%m-%Y %H:%M'
+	#vertical commit history
+	tree = log --graph --pretty=format:'%C(yellow)%h %Creset%Cgreen(%ad) %cr %C(blue)<%an>%Creset%d%n%s%n' --abbrev-commit --date='format-local:%d-%m-%Y %H:%M'
+	st = status
+	c = commit -m
+[color]
+	status = always
+[status]
+	short = false
+    branch = true

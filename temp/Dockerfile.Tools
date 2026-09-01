@@ -1,0 +1,32 @@
+FROM localhost/aerovato/container-v3-core
+LABEL aerovato.container=v3
+
+# 1. Системные пакеты и компиляторы
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-dev python3-venv python3-pip \
+    fd-find bat fzf ripgrep exa git-lfs jq golang \
+    postgresql-client libicu72 \
+    && ln -sf /usr/bin/python3 /usr/bin/python \
+    && ln -sf /usr/bin/fdfind /usr/local/bin/fd \
+    && ln -sf /usr/bin/batcat /usr/local/bin/bat \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 2. Сторонние инсталляторы (Bun, UV, .NET)
+RUN curl -fsSL https://bun.sh/install | bash \
+    && curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && curl -fsSL https://dot.net/v1/dotnet-install.sh | bash -s -- --channel 10.0 --install-dir /usr/share/dotnet
+
+# 3. Единая и надежная настройка путей для ВСЕХ инструментов
+ENV PATH="/root/.bun/bin:/root/.local/bin:/usr/share/dotnet:/root/.dotnet/tools:$PATH"
+
+# 4. Глобальные инструменты .NET + очистка кэша
+RUN dotnet tool install --global dotnet-ef \
+    && dotnet tool install --global csharp-ls \
+    && dotnet nuget locals all --clear
+
+# 5. Глобальные пакеты NPM + очистка кэша
+RUN npm install -g yaml-language-server pnpm vscode-json-languageserver \
+    && ln -sf "$(npm prefix -g)/bin/yaml-language-server" /usr/local/bin/yaml-language-server \
+    && ln -sf "$(npm prefix -g)/bin/pnpm" /usr/local/bin/pnpm \
+    && ln -sf "$(npm prefix -g)/bin/vscode-json-languageserver" /usr/local/bin/vscode-json-languageserver \
+    && npm cache clean --force

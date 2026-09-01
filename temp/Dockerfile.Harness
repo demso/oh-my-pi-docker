@@ -1,0 +1,6 @@
+FROM localhost/aerovato/container-v3-tools
+LABEL aerovato.container=v3
+	
+ENV PATH="/root/.bun/bin:${PATH}"
+
+RUN bun install -g @oh-my-pi/pi-coding-agent

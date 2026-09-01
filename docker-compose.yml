@@ -1,0 +1,17 @@
+name: omp-containers
+
+services:
+  omp-container:
+    image: localhost/aerovato/container-v3:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.User
+    container_name: omp-container
+    tty: true          
+    stdin_open: true  
+    volumes:
+      - omp_data:/root
+      - D:/files/repos:/repos
+ 
+volumes:
+  omp_data:

@@ -1,0 +1,46 @@
+FROM node:24-bookworm-slim
+
+LABEL aerovato.container=v3
+
+WORKDIR /root
+
+# 1. Настройка зеркал Яндекса для Debian 12 + таймауты + кастомный prompt
+RUN sed -i 's|deb.debian.org|mirror.yandex.ru|g' /etc/apt/sources.list.d/debian.sources && \
+    mkdir -p /etc/apt/apt.conf.d && \
+    echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/99retry && \
+    echo 'Acquire::http::Timeout "60";' >> /etc/apt/apt.conf.d/99retry && \
+    echo 'PS1="\[\033[01;32m\][container]\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\]\$ "' >> /root/.bashrc
+
+
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 2. ГЛОБАЛЬНЫЕ НАСТРОЙКИ ЗЕРКАЛ ДЛЯ PYTHON (И для pip, и для uv)
+# PIP_INDEX_URL настраивает стандартный pip
+ENV PIP_INDEX_URL=https://mirror.yandex.ru/pypi/simple
+# UV_INDEX_URL настраивает установщик uv, если он будет добавлен далее
+ENV UV_INDEX_URL=https://mirror.yandex.ru/pypi/simple
+
+# 3. Установка системного софта и Python через зеркало Яндекса
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    curl \
+    wget \
+    unzip \
+    ca-certificates \
+    libssl-dev \
+    zlib1g-dev \
+    libffi-dev \
+    vim \
+    tree \
+    python3 python3-dev python3-venv python3-pip \
+    && ln -sf /usr/bin/python3 /usr/bin/python \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+	
+RUN npm config set registry https://registry.npmmirror.com
+
+CMD ["/bin/bash"]
