@@ -12,6 +12,8 @@ services:
     volumes:
       - omp_data:/root
       - D:/files/repos:/repos
+      - C:/Users/koposov/Documents/ShareX/Screenshots:/screenshots
+      - ${DOWNLOADS}:/downloads
  
 volumes:
   omp_data:
